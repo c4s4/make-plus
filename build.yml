@@ -57,5 +57,5 @@ targets:
       with:
         $NAME$: =NAME
         $DIST_URL$: =DIST_URL
-    - $: 'scp target/={NAME}/make-* target/install ={WEB_HOME}'
+    - $: 'scp target/={NAME}/make-* target/={NAME}/install ={WEB_HOME}'
     - $: [git, push, --tags]
