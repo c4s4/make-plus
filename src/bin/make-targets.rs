@@ -19,7 +19,7 @@ fn main() {
         None => {
             eprintln!("makefile not found");
             std::process::exit(1);
-        },
+        }
     };
     // parse makefile
     let mut help_lines = make_plus::parse_makefile(makefile, !args.root);
@@ -29,5 +29,10 @@ fn main() {
 
 /// Print list of targets
 fn print_target_list(help_lines: &mut Vec<HelpLine>) {
-    println!("{}", help_lines.iter().map(|line| line.name.clone()).collect::<Vec<String>>().join(" "));
+    let list = help_lines
+        .iter()
+        .map(|line| line.name.clone())
+        .collect::<Vec<String>>()
+        .join(" ");
+    println!("{}", list);
 }

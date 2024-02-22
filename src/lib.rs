@@ -1,6 +1,6 @@
-use std::path::Path;
 use regex::Regex;
 use shellexpand;
+use std::path::Path;
 
 /// FILE_NAMES is a list of possible makefile names
 const FILE_NAMES: [&str; 3] = ["makefile", "Makefile", "GNUmakefile"];
@@ -32,9 +32,11 @@ pub fn parse_makefile(file: String, recursive: bool) -> Vec<HelpLine> {
             std::process::exit(1);
         }
     };
-    let mut help_lines: Vec<HelpLine>  = vec![];
+    let mut help_lines: Vec<HelpLine> = vec![];
     let re = Regex::new(r"(?m)^([\w-]+):[\t ]*([^#\n]+)[\t ]*(#[\t ]*(.*))$").unwrap();
-    for (_, [name, deps, _, description]) in re.captures_iter(contents.as_str()).map(|c| c.extract()) {
+    for (_, [name, deps, _, description]) in
+        re.captures_iter(contents.as_str()).map(|c| c.extract())
+    {
         let dependencies: Vec<String> = deps.split_whitespace().map(|s| s.to_string()).collect();
         let help_line = HelpLine {
             name: name.to_string(),
@@ -42,7 +44,7 @@ pub fn parse_makefile(file: String, recursive: bool) -> Vec<HelpLine> {
             dependencies: dependencies,
         };
         help_lines.push(help_line);
-    };
+    }
     if recursive {
         let filenames = find_included_files(&contents);
         for filename in filenames {

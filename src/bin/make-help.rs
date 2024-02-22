@@ -19,7 +19,7 @@ fn main() {
         None => {
             eprintln!("makefile not found");
             std::process::exit(1);
-        },
+        }
     };
     // parse makefile
     let mut help_lines = make_plus::parse_makefile(makefile, !args.root);
