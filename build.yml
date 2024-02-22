@@ -15,12 +15,13 @@ targets:
       - 'name = TARGETS[target]'
       - print: "Building for target ={name}..."
       - $: [cross, build, --release, --target, =target]
-      - copy:  ['make-desc', 'make-help', 'make-targets']
-        dir: 'target/={target}/release'
-        todir: 'target/={NAME}'
-      - copy:  ['make-desc.exe', 'make-help.exe', 'make-targets.exe']
-        dir: 'target/={target}/release'
-        todir: 'target/={NAME}'
+      - for: tool
+        in: [desc, help, targets]
+        do:
+        - copy: 'target/={target}/release/make-={tool}'
+          tofile: 'target/={NAME}/make-={tool}-={name}'
+        - copy: 'target/={target}/release/make-={tool}.exe'
+          tofile: 'target/={NAME}/make-={tool}-={name}.exe'
 
   archive:
     depends: [binaries]
@@ -56,5 +57,5 @@ targets:
       with:
         $NAME$: =NAME
         $DIST_URL$: =DIST_URL
-    - $: 'scp target/={NAME}/* ={WEB_HOME}'
+    - $: 'scp target/={NAME}/make-* ={WEB_HOME}'
     - $: [git, push, --tags]
