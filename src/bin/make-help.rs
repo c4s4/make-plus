@@ -6,7 +6,7 @@ use make_plus::{self, HelpLine};
 #[command(version)]
 struct Cli {
     /// Parse root makefile only
-    #[clap(short, long, default_value_t = false)]
+    #[clap(short, long)]
     root: bool,
 }
 
@@ -22,7 +22,7 @@ fn main() {
         },
     };
     // parse makefile
-    let mut help_lines = make_plus::parse_makefile(makefile, args.root);
+    let mut help_lines = make_plus::parse_makefile(makefile, !args.root);
     // print help
     print_help(&mut help_lines);
 }

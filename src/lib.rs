@@ -1,5 +1,6 @@
 use std::path::Path;
 use regex::Regex;
+use shellexpand;
 
 /// FILE_NAMES is a list of possible makefile names
 const FILE_NAMES: [&str; 3] = ["makefile", "Makefile", "GNUmakefile"];
@@ -42,5 +43,24 @@ pub fn parse_makefile(file: String, recursive: bool) -> Vec<HelpLine> {
         };
         help_lines.push(help_line);
     };
+    if recursive {
+        let filenames = find_included_files(&contents);
+        for filename in filenames {
+            // expand user home directory
+            let file = shellexpand::tilde(&filename).to_string();
+            let mut included = parse_makefile(file, true);
+            help_lines.append(&mut included);
+        }
+    }
     help_lines
+}
+
+/// return included makefiles
+fn find_included_files(contents: &str) -> Vec<String> {
+    let mut included = vec![];
+    let re = Regex::new(r"(?m)^-?include\s+(.*)$").unwrap();
+    for (_, [filename]) in re.captures_iter(contents).map(|c| c.extract()) {
+        included.push(filename.to_string());
+    }
+    included
 }
