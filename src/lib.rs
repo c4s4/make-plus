@@ -52,6 +52,8 @@ pub fn parse_makefile(file: String, recursive: bool) -> Vec<HelpLine> {
             help_lines.append(&mut included);
         }
     }
+    // sort help lines by name
+    help_lines.sort_by(|a, b| a.name.cmp(&b.name));
     help_lines
 }
 

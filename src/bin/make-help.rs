@@ -1,7 +1,7 @@
 use clap::Parser;
 use make_plus::{self, HelpLine};
 
-/// Run command ensuring only one instance is running on this system
+/// Print help on makefile targets
 #[derive(Parser)]
 #[command(version)]
 struct Cli {
@@ -31,8 +31,6 @@ fn main() {
 fn print_help(help_lines: &mut Vec<HelpLine>) {
     // get max length of name
     let max_name_len = help_lines.iter().map(|line| line.name.len()).max().unwrap();
-    // sort help lines by name
-    help_lines.sort_by(|a, b| a.name.cmp(&b.name));
     // iterate over help lines
     for line in help_lines {
         // print name
