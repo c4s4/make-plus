@@ -180,7 +180,7 @@ dependencies = [
 
 [[package]]
 name = "make-plus"
-version = "0.1.2"
+version = "0.1.0"
 dependencies = [
  "clap",
  "regex",
