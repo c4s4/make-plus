@@ -2,10 +2,6 @@
 
 extends: rust
 
-properties:
-  TARGETS:
-    x86_64-apple-darwin: darwin-amd64
-
 targets:
 
   binaries:
