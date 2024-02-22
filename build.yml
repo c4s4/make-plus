@@ -1,3 +1,64 @@
 # NeON build file (https://github.com/c4s4/neon)
 
 extends: rust
+
+properties:
+  TARGETS:
+    x86_64-apple-darwin: darwin-amd64
+
+targets:
+
+  binaries:
+    depends: env
+    doc: "Build binaries for all targets"
+    steps:
+    - mkdir: 'target/={NAME}'
+    - for: target
+      in:  =keys(TARGETS)
+      do:
+      - 'name = TARGETS[target]'
+      - print: "Building for target ={name}..."
+      - $: [cross, build, --release, --target, =target]
+      - copy:  ['make-desc', 'make-help', 'make-targets']
+        dir: 'target/={target}/release'
+        todir: 'target/={NAME}'
+      - copy:  ['make-desc.exe', 'make-help.exe', 'make-targets.exe']
+        dir: 'target/={target}/release'
+        todir: 'target/={NAME}'
+
+  archive:
+    depends: [binaries]
+    doc: "Generate and archive with binaries for all target"
+    steps:
+    - copy: ['={_BASE}/README*', '={_BASE}/LICENSE*']
+      todir: 'target/={NAME}/'
+    - zip: '={NAME}/*'
+      dir: 'target'
+      tofile: 'target/={NAME}.zip'
+
+  release:
+    depends: [clean, archive]
+    steps:
+    - $: [toml, get, Cargo.toml, package.version, --raw]
+      1=: version
+      1x: true
+    - move: 'target/={NAME}.zip'
+      tofile: 'target/={NAME}-={version}.zip'
+    - if: '_OS == "linux"'
+      then:
+      - copy: '={NAME}-={version}.zip'
+        dir: 'target'
+        todir: '~/dsk/'
+      else:
+      - copy: '={NAME}-={version}.zip'
+        dir: 'target'
+        todir: '~/Desktop/'
+    - $: [git, tag, =version]
+    - copy: 'install'
+      todir: 'target/={NAME}/'
+    - replace: 'target/={NAME}/install'
+      with:
+        $NAME$: =NAME
+        $DIST_URL$: =DIST_URL
+    - $: 'scp target/={NAME}/* ={WEB_HOME}'
+    - $: [git, push, --tags]
