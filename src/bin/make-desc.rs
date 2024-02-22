@@ -1,7 +1,7 @@
 use clap::Parser;
 use make_plus::{self, HelpLine};
 
-/// Print help on makefile targets
+/// Describe given target
 #[derive(Parser)]
 #[command(version)]
 struct Cli {
