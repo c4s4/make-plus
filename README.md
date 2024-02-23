@@ -52,9 +52,46 @@ help: # Print help on Makefile
 
 To get help on targets in root makefile only (without parsing included ones), you can pass `--root` or `-r` option on command line. To skip help on targets without comment, you can pass `--mute` or `-m` on command line.
 
+To get help, type on command line:
+
+```
+$ make-help --help
+Print help on makefile targets
+
+Usage: make-help [OPTIONS]
+
+Options:
+  -f, --file <FILE>  Makefile to parse
+  -r, --root         Parse root makefile only
+  -m, --mute         Don't print targets without description
+  -h, --help         Print help
+  -V, --version      Print version
+```
+
 ### make-targets
 
-This tool lists targets available in current makefile and included ones recursively. This is called to perform Bash completion.
+This tool lists targets available in current makefile and included ones recursively. This is called to perform Bash completion. For instance, to list targets in current makefile, you might type:
+
+```
+$ make-targets
+build clean fmt help install run
+```
+
+To get help, type on command line:
+
+```
+$ make-targets --help
+Print list of targets
+
+Usage: make-targets [OPTIONS]
+
+Options:
+  -f, --file <FILE>  Makefile to parse
+  -r, --root         Parse root makefile only
+  -m, --mute         Don't print targets without description
+  -h, --help         Print help
+  -V, --version      Print version
+```
 
 To enable Bash target completion on make, source following file:
 
@@ -64,7 +101,7 @@ complete -W "\`make-targets\`" make
 
 ## make-desc
 
-Describe given target. If makefile defines a *build* target, you might describe it with:
+Describe given target. You might describe *build* target it with:
 
 ```
 $ make-desc build
@@ -72,5 +109,23 @@ Build binary
 ```
 
 This prints the target description on command line. In a makefile, you can get current target name with *$@* and thus get its description calling `make-desc $@`.
+
+To get help, type on command line:
+
+```
+$ make-desc --help
+Describe given target
+
+Usage: make-desc [OPTIONS] <TARGET>
+
+Arguments:
+  <TARGET>  Target to get description for
+
+Options:
+  -f, --file <FILE>  Makefile to parse
+  -r, --root         Parse root makefile only
+  -h, --help         Print help
+  -V, --version      Print version
+```
 
 *Enjoy!*
