@@ -11,6 +11,9 @@ struct Cli {
     /// Parse root makefile only
     #[clap(short, long)]
     root: bool,
+    /// Don't print targets without description
+    #[clap(short, long)]
+    mute: bool,
 }
 
 fn main() {
@@ -19,28 +22,28 @@ fn main() {
     // find makefile
     let makefile = match args.file {
         Some(file) => file,
-        None => {
-            match make_plus::find_makefile() {
-                Some(makefile) => makefile,
-                None => {
-                    eprintln!("makefile not found");
-                    std::process::exit(1);
-                }
+        None => match make_plus::find_makefile() {
+            Some(makefile) => makefile,
+            None => {
+                eprintln!("makefile not found");
+                std::process::exit(1);
             }
-        }
+        },
     };
     // parse makefile
     let mut help_lines = make_plus::parse_makefile(makefile, !args.root);
     // print target description
-    print_target_list(&mut help_lines);
+    print_target_list(&mut help_lines, args.mute);
 }
 
 /// Print list of targets
-fn print_target_list(help_lines: &mut Vec<HelpLine>) {
-    let list = help_lines
-        .iter()
-        .map(|line| line.name.clone())
-        .collect::<Vec<String>>()
-        .join(" ");
-    println!("{}", list);
+fn print_target_list(help_lines: &mut Vec<HelpLine>, mute: bool) {
+    let mut list = vec![];
+    for line in help_lines.iter() {
+        if mute && line.description.len() == 0 {
+            continue;
+        }
+        list.push(line.name.clone());
+    }
+    println!("{}", list.join(" "));
 }
