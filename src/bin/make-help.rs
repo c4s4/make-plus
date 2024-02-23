@@ -11,6 +11,9 @@ struct Cli {
     /// Parse root makefile only
     #[clap(short, long)]
     root: bool,
+    /// Don't print targets without description
+    #[clap(short, long)]
+    mute: bool,
 }
 
 fn main() {
@@ -32,15 +35,19 @@ fn main() {
     // parse makefile
     let mut help_lines = make_plus::parse_makefile(makefile, !args.root);
     // print help
-    print_help(&mut help_lines);
+    print_help(&mut help_lines, args.mute);
 }
 
 /// Print help lines
-fn print_help(help_lines: &mut Vec<HelpLine>) {
+fn print_help(help_lines: &mut Vec<HelpLine>, mute: bool) {
     // get max length of name
     let max_name_len = help_lines.iter().map(|line| line.name.len()).max().unwrap();
     // iterate over help lines
     for line in help_lines {
+        // skip if mute and no description
+        if mute && line.description.len() == 0 {
+            continue;
+        }
         // print name
         print!("\x1b[93m{:width$}\x1b[0m", line.name, width = max_name_len);
         // print description
