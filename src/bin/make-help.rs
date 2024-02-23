@@ -22,15 +22,13 @@ fn main() {
     // find makefile
     let makefile = match args.file {
         Some(file) => file,
-        None => {
-            match make_plus::find_makefile() {
-                Some(makefile) => makefile,
-                None => {
-                    eprintln!("makefile not found");
-                    std::process::exit(1);
-                }
+        None => match make_plus::find_makefile() {
+            Some(makefile) => makefile,
+            None => {
+                eprintln!("makefile not found");
+                std::process::exit(1);
             }
-        }
+        },
     };
     // parse makefile
     let mut help_lines = make_plus::parse_makefile(makefile, !args.root);
