@@ -1,7 +1,7 @@
 # Included makefile
 
-spam: eggs # Included target
-	@echo "spam target"
+inc: dep # This is inc target
+	@echo "inc target"
 
-eggs: # Another included target
-	@echo "eggs target"
+dep: # This is dep target
+	@echo "dep target"

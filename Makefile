@@ -1,11 +1,11 @@
 # This is a test Makefile
 include included.mk
 
-test: foo bar # This is a test target
-	@echo "test target"
-
-foo: # This is a foo target
+foo: bar # This is foo target
 	@echo "foo target"
 
-bar:
+bar: # This is bar target
 	@echo "bar target"
+
+bug:
+	@echo "bug target"
