@@ -7,5 +7,5 @@ test: foo bar # This is a test target
 foo: # This is a foo target
 	@echo "foo target"
 
-bar: # This is a bar target
+bar:
 	@echo "bar target"

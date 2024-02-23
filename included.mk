@@ -3,5 +3,5 @@
 spam: eggs # Included target
 	@echo "spam target"
 
-eggs: # Another ncluded target
+eggs: # Another included target
 	@echo "eggs target"

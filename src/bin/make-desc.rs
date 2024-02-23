@@ -5,6 +5,9 @@ use make_plus::{self, HelpLine};
 #[derive(Parser)]
 #[command(version)]
 struct Cli {
+    /// Makefile to parse
+    #[clap(short, long)]
+    file: Option<String>,
     /// Parse root makefile only
     #[clap(short, long)]
     root: bool,
@@ -16,11 +19,16 @@ fn main() {
     // parse command line arguments
     let args = Cli::parse();
     // find makefile
-    let makefile = match make_plus::find_makefile() {
-        Some(makefile) => makefile,
+    let makefile = match args.file {
+        Some(file) => file,
         None => {
-            eprintln!("makefile not found");
-            std::process::exit(1);
+            match make_plus::find_makefile() {
+                Some(makefile) => makefile,
+                None => {
+                    eprintln!("makefile not found");
+                    std::process::exit(1);
+                }
+            }
         }
     };
     // parse makefile

@@ -22,25 +22,15 @@ sh -c "$(wget -O - https://sweetohm.net/dist/make-plus/install)"
 
 ### Binary package
 
-Otherwise, you can download latest binary archive at <https://github.com/c4s4/make-plus/releases>. Unzip the archive, put the binary of your platform somewhere in your *PATH* and rename it *project*.
+Otherwise, you can download latest binary archive at <https://github.com/c4s4/make-plus/releases>. Unzip the archive, put binaries for your platform somewhere in your *PATH* and rename them without platform suffix.
 
 ## Usage
 
-There are two tools in this toolbox:
-
-### make-targets
-
-This tool lists targets available in current makefile and included ones recursively. This is called to perform Bash completion.
-
-To enable Bash target completion on make, source following file:
-
-```
-complete -W "\`make-targets\`" make
-```
+There are three tools in this toolbox:
 
 ### make-help
 
-This tool prints help on targets in current makefile and included ones recursively. Thus to get help about makefile in current directory, you might type:
+This tool prints help on targets in current makefile and included ones recursively. Dependant targets are printed in brackets. Thus to get help about makefile in current directory, you might type:
 
 ```
 $ make-help
@@ -60,7 +50,17 @@ help: # Print help on Makefile
 	@make-help
 ```
 
-To get help on targets in root makefile only (without parsing included ones), you can pass `-root` option on command line. To skip help on targets without comment, you can pass `-mute` on command line.
+To get help on targets in root makefile only (without parsing included ones), you can pass `--root` or `-r` option on command line. To skip help on targets without comment, you can pass `--mute` or `-m` on command line.
+
+### make-targets
+
+This tool lists targets available in current makefile and included ones recursively. This is called to perform Bash completion.
+
+To enable Bash target completion on make, source following file:
+
+```
+complete -W "\`make-targets\`" make
+```
 
 ## make-desc
 
