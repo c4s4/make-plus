@@ -16,7 +16,7 @@ pub fn find_makefile() -> Option<String> {
 }
 
 /// HELP_LINE_RE is a regex to match a line in a makefile
-const HELP_LINE_RE: &str = r"(?m)^([\w-]+):[\t ]*([^#\n]+)[\t ]*(#[\t ]*(.*))";
+const HELP_LINE_RE: &str = r"(?m)^([\w-]+):[\t ]*([^#\n]*)[\t ]*(([#\t ]*)(.*))";
 
 /// HelpLine is a struct that represents a line in a makefile
 #[derive(Debug)]
@@ -37,7 +37,7 @@ pub fn parse_makefile(file: String, recursive: bool) -> Vec<HelpLine> {
     };
     let mut help_lines: Vec<HelpLine> = vec![];
     let re = Regex::new(HELP_LINE_RE).unwrap();
-    for (_, [name, deps, _, description]) in
+    for (_, [name, deps, _, _, description]) in
         re.captures_iter(contents.as_str()).map(|c| c.extract())
     {
         let dependencies: Vec<String> = deps.split_whitespace().map(|s| s.to_string()).collect();
