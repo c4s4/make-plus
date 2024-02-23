@@ -28,10 +28,10 @@ pub struct HelpLine {
 
 /// parse_makefile returns HelpLines
 pub fn parse_makefile(file: String, recursive: bool) -> Vec<HelpLine> {
-    let contents = match std::fs::read_to_string(file) {
+    let contents = match std::fs::read_to_string(&file) {
         Ok(contents) => contents,
         Err(err) => {
-            eprintln!("ERROR reading makefile: {}", err);
+            eprintln!("ERROR reading makefile {}: {}", &file, err);
             std::process::exit(1);
         }
     };
@@ -40,10 +40,10 @@ pub fn parse_makefile(file: String, recursive: bool) -> Vec<HelpLine> {
     for (_, [name, deps, _, _, description]) in
         re.captures_iter(contents.as_str()).map(|c| c.extract())
     {
-        let dependencies: Vec<String> = deps.split_whitespace().map(|s| s.to_string()).collect();
+        let dependencies: Vec<String> = deps.split_whitespace().map(|s| s.trim().to_string()).collect();
         let help_line = HelpLine {
-            name: name.to_string(),
-            description: description.to_string(),
+            name: name.trim().to_string(),
+            description: description.trim().to_string(),
             dependencies: dependencies,
         };
         help_lines.push(help_line);
