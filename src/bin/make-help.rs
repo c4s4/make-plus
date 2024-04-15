@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::Parser;
 use make_plus::{self, HelpLine};
 
@@ -19,6 +20,13 @@ struct Cli {
 fn main() {
     // parse command line arguments
     let args = Cli::parse();
+    match run(args) {
+        Ok(_) => println!("OK"),
+        Err(e) => eprintln!("ERROR: {:#}", e),
+    }
+}
+
+fn run(args: Cli) -> Result<()> {
     // find makefile
     let makefile = match args.file {
         Some(file) => file,
@@ -31,9 +39,10 @@ fn main() {
         },
     };
     // parse makefile
-    let mut help_lines = make_plus::parse_makefile(makefile, !args.root);
+    let mut help_lines = make_plus::parse_makefile(makefile, !args.root)?;
     // print help
     print_help(&mut help_lines, args.mute);
+    Ok(())
 }
 
 /// Print help lines

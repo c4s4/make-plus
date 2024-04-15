@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use regex::Regex;
 use shellexpand;
 use std::path::Path;
@@ -27,20 +28,18 @@ pub struct HelpLine {
 }
 
 /// parse_makefile returns HelpLines
-pub fn parse_makefile(file: String, recursive: bool) -> Vec<HelpLine> {
-    let contents = match std::fs::read_to_string(&file) {
-        Ok(contents) => contents,
-        Err(err) => {
-            eprintln!("ERROR reading makefile {}: {}", &file, err);
-            std::process::exit(1);
-        }
-    };
+pub fn parse_makefile(file: String, recursive: bool) -> Result<Vec<HelpLine>> {
+    let contents =
+        std::fs::read_to_string(&file).with_context(|| format!("reading makefile: {}", file))?;
     let mut help_lines: Vec<HelpLine> = vec![];
     let re = Regex::new(HELP_LINE_RE).unwrap();
     for (_, [name, deps, _, _, description]) in
         re.captures_iter(contents.as_str()).map(|c| c.extract())
     {
-        let dependencies: Vec<String> = deps.split_whitespace().map(|s| s.trim().to_string()).collect();
+        let dependencies: Vec<String> = deps
+            .split_whitespace()
+            .map(|s| s.trim().to_string())
+            .collect();
         let help_line = HelpLine {
             name: name.trim().to_string(),
             description: description.trim().to_string(),
@@ -53,13 +52,13 @@ pub fn parse_makefile(file: String, recursive: bool) -> Vec<HelpLine> {
         for filename in filenames {
             // expand user home directory
             let file = shellexpand::tilde(&filename).to_string();
-            let mut included = parse_makefile(file, true);
+            let mut included = parse_makefile(file, true)?;
             help_lines.append(&mut included);
         }
     }
     // sort help lines by name
     help_lines.sort_by(|a, b| a.name.cmp(&b.name));
-    help_lines
+    Ok(help_lines)
 }
 
 /// return included makefiles
