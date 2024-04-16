@@ -21,7 +21,10 @@ fn main() {
     let args = Cli::parse();
     match run(args) {
         Ok(_) => println!("OK"),
-        Err(e) => eprintln!("ERROR {:#}", e),
+        Err(e) => {
+            eprintln!("ERROR {:#}", e);
+            std::process::exit(1);
+        },
     }
 }
 

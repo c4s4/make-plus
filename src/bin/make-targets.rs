@@ -22,7 +22,10 @@ fn main() {
     let args = Cli::parse();
     match run(args) {
         Ok(_) => println!("OK"),
-        Err(e) => eprintln!("ERROR {:#}", e),
+        Err(e) => {
+            eprintln!("ERROR {:#}", e);
+            std::process::exit(1);
+        },
     }
 }
 
@@ -32,10 +35,7 @@ fn run(args: Cli) -> Result<()> {
         Some(file) => file,
         None => match make_plus::find_makefile() {
             Some(makefile) => makefile,
-            None => {
-                eprintln!("makefile not found");
-                std::process::exit(1);
-            }
+            None => anyhow::bail!("makefile not found"),
         },
     };
     // parse makefile
